@@ -11,6 +11,7 @@ typedef struct Player
 }player;
  
 void MapSetUp();
+void playerMov();
 player* newPlayer();
 
 
