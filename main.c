@@ -7,7 +7,10 @@ typedef struct Player
 {
   int xPosition;
   int yPosition;
-  int health;
+  short health;
+  short mana;
+  short strength;
+  short intelligence;
 }player;
  
 void MapSetUp();
