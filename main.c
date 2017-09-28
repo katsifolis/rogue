@@ -5,18 +5,17 @@
 
 typedef struct Player
 {
-  int xPosition;
-  int yPosition;
-  short health;
-  short mana;
-  short strength;
-  short intelligence;
+int xPosition;
+int yPosition;
+short health;
+short mana;
+short strength;
+short intelligence;
 }player;
- 
+
+void StatusBar(player* user);
 void MapSetUp();
 player* newPlayer();
-
-
 
 int main()
 {
@@ -28,9 +27,10 @@ int main()
   raw();
   keypad(stdscr, TRUE);
   noecho();
-  
+
   MapSetUp();
   player* new = newPlayer();
+  StatusBar(new);
   starty = new->yPosition;
   startx = new->xPosition;
   while(1)
@@ -38,34 +38,55 @@ int main()
     ch = getch();
     if(ch == KEY_DOWN)
     { 
-      checkMV = mvinch(++starty, startx);
-      if(checkMV == '-' || checkMV == '|')
-      {
-        continue;
-      }else
-      {
-      move(starty,startx);
-      mvprintw(starty, startx, ".");
-      mvprintw(++starty, startx, "@");
+      switch(mvinch(starty + 1, startx))
+      { 
+        case('-'):
+          move(starty, startx); //Move bitch get out the way
+          break;
+        default:
+          mvprintw(starty, startx, ".");
+          mvprintw(++starty, startx, "@");
+          move(starty,startx);
       }
     }
     if(ch == KEY_UP)
     { 
-      mvprintw(starty, startx, ".");
-      mvprintw(--starty, startx, "@");
-      move(starty,startx);
+      switch(mvinch(starty - 1, startx))
+      { 
+        case('-'):
+          move(starty, startx); //Move bitch get out the way
+          break;
+        default:
+          mvprintw(starty, startx, ".");
+          mvprintw(--starty, startx, "@");
+          move(starty,startx);
+      }
     }
     if(ch == KEY_RIGHT)
     { 
-      mvprintw(starty, startx, ".");
-      mvprintw(starty, ++startx, "@");
-      move(starty,startx);
+      switch(mvinch(starty, startx + 1))
+      { 
+        case('|'):
+          move(starty, startx); //Move bitch get out the way
+          break;
+        default:
+          mvprintw(starty, startx, ".");
+          mvprintw(starty, ++startx, "@");
+          move(starty,startx);
+      }
     }
     if(ch == KEY_LEFT)
     { 
-      mvprintw(starty, startx, ".");
-      mvprintw(starty, --startx, "@");
-      move(starty,startx);
+      switch(mvinch(starty, startx - 1))
+      { 
+        case('|'):
+          move(starty, startx); //Move bitch get out the way
+          break;
+        default:
+          mvprintw(starty, startx, ".");
+          mvprintw(starty, --startx, "@");
+          move(starty,startx);
+      }
     }
     if(ch == 'q') break;
   }
@@ -75,11 +96,11 @@ int main()
   return 0;
 
 }
-  
+
 void MapSetUp()
 {
   int x, y;
-  mvprintw(y = 10,x = 10, "--------");
+  mvprintw(y = 8,x =  8, "--------");
   mvprintw(++y, x, "|......|");
   mvprintw(++y, x, "|......|");
   mvprintw(++y, x, "|......|");
@@ -88,7 +109,7 @@ void MapSetUp()
   mvprintw(++y, x, "|......|");
   mvprintw(++y, x, "--------");
 
-  mvprintw(y = 27,x =  27, "--------");
+  mvprintw(y = rand() % 28,x =  rand() % 28, "--------");
   mvprintw(++y, x, "|......|");
   mvprintw(++y, x, "|......|");
   mvprintw(++y, x, "|......|");
@@ -107,14 +128,22 @@ player* newPlayer()
   new = malloc(sizeof(player));
   new->yPosition = 12;
   new->xPosition = 13;
-  new->health = 20;
+  new->health = rand() % 20;
+  new->mana = rand() % 32;
   mvprintw(new->yPosition,new->xPosition, "@");
- 
+
   move(new->yPosition, new->xPosition);
- 
+
   return new;
 }
 
+void StatusBar(player* user)
+{
+  int i, y, x;
+  mvprintw(38, 0, "Health:%d", user->health);
+  mvprintw(38, 11, "Mana:%d", user->mana);
+  return;
+}
 
 
 
