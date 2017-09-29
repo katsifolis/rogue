@@ -1,20 +1,15 @@
 #include <stdio.h>
 #include <ncurses.h>
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
+#include "nodes.h"
 
-typedef struct Player
-{
-int xPosition;
-int yPosition;
-short health;
-short mana;
-short strength;
-short intelligence;
-}player;
+#define MAXSTRING 64   
 
 void StatusBar(player* user);
 void MapSetUp();
+monster* newMonster();
 player* newPlayer();
 
 int main()
@@ -23,13 +18,15 @@ int main()
   srand(time(NULL));
   int ch,  startx = 0, starty = 0;
   char checkMV;
-  initscr();
-  raw();
-  keypad(stdscr, TRUE);
-  noecho();
+  initscr(); // Ncurses start 
+  raw(); // Disable line buffering
+  keypad(stdscr, TRUE); // Enables keys like F1, F2
+  noecho(); 
+  box(stdscr, 0, 0);
 
   MapSetUp();
   player* new = newPlayer();
+  monster* mon = newMonster();
   StatusBar(new);
   starty = new->yPosition;
   startx = new->xPosition;
@@ -137,6 +134,19 @@ player* newPlayer()
   return new;
 }
 
+monster* newMonster()
+{
+  monster* mon;
+  mon = malloc(sizeof(monster));
+  mon = malloc(sizeof(MAXSTRING));
+  mon->health = rand() % 20;
+  mon->mana = rand () % 32;
+  
+
+  return mon;
+}
+  
+
 void StatusBar(player* user)
 {
   int i, y, x;
@@ -144,6 +154,7 @@ void StatusBar(player* user)
   mvprintw(38, 11, "Mana:%d", user->mana);
   return;
 }
+
 
 
 
