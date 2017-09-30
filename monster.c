@@ -8,4 +8,4 @@
 #include "nodes.h"
 #endif
 
-monster* MonMov()
+monster* MonMov();
