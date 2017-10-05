@@ -105,15 +105,7 @@ void MapSetUp()
   mvprintw(++y, x, "|......|");
   mvprintw(++y, x, "|......|");
   mvprintw(++y, x, "--------");
-
-  mvprintw(y = rand() % 28,x =  rand() % 28, "--------");
-  mvprintw(++y, x, "|......|");
-  mvprintw(++y, x, "|......|");
-  mvprintw(++y, x, "|......|");
-  mvprintw(++y, x, "|......|");
-  mvprintw(++y, x, "|......|");
-  mvprintw(++y, x, "|......|");
-  mvprintw(++y, x, "--------");
+  mvprintw(y, x + rand() % 6, "+"); 
 
   return;
 
