@@ -161,11 +161,15 @@ monster* newMonster()
 
 void StatusBar(player* user)
 {
+
   int i, y, x;
-  mvprintw(38, 0, "Health:%d", user->health);
-  mvprintw(38, 11, "Mana:%d", user->mana);
+  getmaxyx(stdscr, y, x);
+  mvprintw(y - 1, 0, "Health:%d", user->health);
+  mvprintw(y - 1, 11, "Mana:%d", user->mana);
   return;
 }
+
+// The random Generator
 
 unsigned int rand32()
 {
