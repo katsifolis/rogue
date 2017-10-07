@@ -9,8 +9,3 @@
 #endif
 
 monster* MonMov();
-<<<<<<< HEAD
-
-
-=======
->>>>>>> b2237ee98377be82fe6f309277bbab3c0e46b102
