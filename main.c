@@ -165,7 +165,7 @@ void StatusBar(player* user)
   int i, y, x;
   getmaxyx(stdscr, y, x);
   mvprintw(y - 1, 0, "Health:%d", user->health);
-  mvprintw(y - 1, 11, "Mana:%d", user->mana);
+  mvprintw(y - 1, x / 6, "Mana:%d", user->mana);
   return;
 }
 
