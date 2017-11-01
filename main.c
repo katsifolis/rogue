@@ -7,24 +7,14 @@
 
 #define MAXSTRING 64   
 
-// PRNG = Multiply with Carry
-unsigned int rand32();
-unsigned int randCMWC(struct cmwc_state *state);
-void initCWMC(struct cmwc_state *state, unsigned int seed);
-// end
 void StatusBar(player* user);
-void randMapSetUp(struct cmwc_state *state);
+void randMapSetUp();
 void MapSetUp();
 monster* newMonster();
 player* newPlayer();
 
 int main()
 {
-  // PRNG
-  struct cmwc_state cmwc;
-  unsigned int seed = time(NULL);
-  initCWMC(&cmwc, seed);
-  printf("RANDOM NUMBRE: %u \n", randCMWC(&cmwc));
 
   //Initializatios
   srand(time(NULL));
@@ -35,7 +25,6 @@ int main()
   keypad(stdscr, TRUE); // Enables keys like F1, F2
   noecho(); 
 
-  randMapSetUp(&cmwc);
   MapSetUp();
   player* new = newPlayer();
   monster* mon = newMonster();
@@ -106,18 +95,19 @@ int main()
 
 }
 
-void randMapSetUp(struct cmwc_state *state)
+void randMapSetUp()
 {
   int x, y, maxy, maxx;
   getmaxyx(stdscr, maxy, maxx);
-  mvprintw(y = randCMWC(state) % maxy , x = randCMWC(state) % maxx, ".");
+  mvprintw(y = rand() % maxy , x = rand() % maxx, ".");
   return;
 }
 
 void MapSetUp()
 {
-  int x, y;
-  mvprintw(y = 8,x =  8, "--------");
+  int x, y, xmax, ymax;
+  getmaxyx(stdscr, ymax, xmax);
+  mvprintw(y = 8,x = 8, "--------");
   mvprintw(++y, x, "|......|");
   mvprintw(++y, x, "|......|");
   mvprintw(++y, x, "|......|");
@@ -148,6 +138,7 @@ player* newPlayer()
 
 monster* newMonster()
 {
+
   monster* mon;
   mon = malloc(sizeof(monster));
   mon = malloc(sizeof(MAXSTRING));
@@ -168,45 +159,6 @@ void StatusBar(player* user)
   mvprintw(y - 1, x / 6, "Mana:%d", user->mana);
   return;
 }
-
-// The random Generator
-
-unsigned int rand32()
-{
-  unsigned int result = rand();
-  return result << 16 | rand();
-}   
-
-void initCWMC(struct cmwc_state *state, unsigned int seed)
-{
-  srand(seed);
-  for(int i = 0; i < CMWC_CYCLE; i++) state ->Q[i] = rand32();
-  
-  do state->c = rand32();
-  while(state->c >= CMWC_C_MAX);
-  state->i = CMWC_CYCLE - 1;
-}
-  
-
-unsigned int randCMWC(struct cmwc_state *state)
-{
-  unsigned long const a = 1872; // As Marsaglia recommends
-  unsigned int const m = 0xfffffffe;
-  unsigned long t;
-  unsigned long x;
-
-  state->i = (state->i + 1) & (CMWC_CYCLE - 1);
-  t = a * state->Q[state->i] + state->c;
-  
-  state->c = t >> 32;
-  x = t + state->c;
-  if(x < state->c)
-  {
-    x++;
-    state->c++;
-  }
-  return state->Q[state->i] = m - x;
-} 
 
 
 
