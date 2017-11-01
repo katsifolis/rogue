@@ -21,6 +21,8 @@ int main()
   int ch,  startx = 0, starty = 0;
   char checkMV;
   initscr(); // Ncurses start 
+  start_color(); // Color mode
+  init_pair(1, COLOR_MAGENTA, 0);
   raw(); // Disable line buffering
   keypad(stdscr, TRUE); // Enables keys like F1, F2
   noecho(); 
@@ -43,7 +45,9 @@ int main()
           break;
         default:
           mvprintw(starty, startx, ".");
+	  attron(COLOR_PAIR(1));
           mvprintw(++starty, startx, "@");
+	  attroff(COLOR_PAIR(1));
           move(starty,startx);
       }
     }
