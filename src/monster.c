@@ -9,4 +9,3 @@
 #include "constant.h"
 #endif
 
-monster* MonMov();

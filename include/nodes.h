@@ -1,5 +1,5 @@
 
-typedef struct Player
+typedef struct _player
 {
 int xPosition;
 int yPosition;
@@ -9,7 +9,7 @@ short strength;
 short intelligence;
 }player;
 
-typedef struct Monster
+typedef struct _monster
 { 
   int xPosition;
   int yPosition;
@@ -20,7 +20,7 @@ typedef struct Monster
 
 }monster;
 
-typedef struct Item
+typedef struct _item
 {
   short type;
     

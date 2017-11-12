@@ -1,2 +1,2 @@
 all:
-	gcc main.c monster.c -o rogue -lncurses
+	gcc main.c monster.c -o rogue -I ../include/ -lncurses

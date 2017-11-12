@@ -7,11 +7,10 @@
 #include "constant.h"
 
 
-void StatusBar(player* user);
-void randMapSetUp();
-void MapSetUp();
-monster* newMonster();
-player* newPlayer();
+void status_bar(player* user);
+void map_setup();
+monster* new_monster();
+player* new_player();
 
 int main()
 {
@@ -27,10 +26,10 @@ int main()
   keypad(stdscr, TRUE); // Enables keys like F1, F2
   noecho(); 
 
-  MapSetUp();
-  player* new = newPlayer();
-  monster* mon = newMonster();
-  StatusBar(new);
+  map_setup();
+  player* new = new_player();
+  monster* mon = new_monster();
+  status_bar(new);
   starty = new->yPosition;
   startx = new->xPosition;
   while(1)
@@ -45,9 +44,7 @@ int main()
           break;
         default:
           mvprintw(starty, startx, ".");
-	  attron(COLOR_PAIR(1));
           mvprintw(++starty, startx, "@");
-	  attroff(COLOR_PAIR(1));
           move(starty,startx);
       }
     }
@@ -60,9 +57,7 @@ int main()
           break;
         default:
           mvprintw(starty, startx, ".");
-	  attron(COLOR_PAIR(1));
           mvprintw(--starty, startx, "@");
-          attroff(COLOR_PAIR(1));
           move(starty,startx);
       }
     }
@@ -75,9 +70,7 @@ int main()
           break;
         default:
           mvprintw(starty, startx, ".");
-	  attron(COLOR_PAIR(1));
           mvprintw(starty, ++startx, "@");
-          attroff(COLOR_PAIR(1));
           move(starty,startx);
       }
     }
@@ -90,9 +83,7 @@ int main()
           break;
         default:
           mvprintw(starty, startx, ".");
-	  attron(COLOR_PAIR(1));
           mvprintw(starty, --startx, "@");
-          attroff(COLOR_PAIR(1));
           move(starty,startx);
       }
     }
@@ -105,15 +96,8 @@ int main()
 
 }
 
-void randMapSetUp()
-{
-  int x, y, maxy, maxx;
-  getmaxyx(stdscr, maxy, maxx);
-  mvprintw(y = rand() % maxy , x = rand() % maxx, ".");
-  return;
-}
 
-void MapSetUp()
+void map_setup()
 {
   int x, y, xmax, ymax;
   getmaxyx(stdscr, ymax, xmax);
@@ -131,7 +115,7 @@ void MapSetUp()
 
 }
 
-player* newPlayer()
+player* new_player()
 {
   player *new;
   new = malloc(sizeof(player));
@@ -146,7 +130,7 @@ player* newPlayer()
   return new;
 }
 
-monster* newMonster()
+monster* new_monster()
 {
 
   monster* mon;
@@ -160,7 +144,7 @@ monster* newMonster()
 }
   
 
-void StatusBar(player* user)
+void status_bar(player* user)
 {
 
   int i, y, x;
