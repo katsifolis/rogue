@@ -5,15 +5,8 @@
 #include "constants.h"
 #endif
 
-  
 int map_setup(int seed)
 {
-  int maxy, maxx, y, x;
-  getmaxyx(stdscr, maxy, maxx);
-  
-  
-  
-
-
-
+    int maxy, maxx, y, x;
+    getmaxyx(stdscr, maxy, maxx);
 }
