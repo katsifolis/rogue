@@ -180,6 +180,12 @@ void dungeon_setup()
 {
 
 }
+
+void generator()
+{
+
+
+}
     
 
 
