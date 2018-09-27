@@ -82,7 +82,7 @@ i_tetromino[4][3] =
 { 0, 1, 0 },
 { 0, 1, 0 },
 { 0, 1, 0 },
-{ 0, 1, 0 }
+{ 0, 0, 0 }
 };
 
 int
@@ -155,19 +155,18 @@ void create_win() {
 	
 }
 
-void purge_tetromino(SDL_Rect rect)
+void purge_tetromino(SDL_Rect rect, pos position)
 {
 	int i, j;
 	SDL_SetRenderDrawColor(renderer, SDL_BACKGROUND);
 	for (i = 0; i < 4; i++) {
 		for (j = 0; j < 3; j++) {
-			rect.x = 1+j*BLOCK_WIDTH;
-			rect.y = 1+i*BLOCK_HEIGHT; 		
+			rect.x = position.x+j*BLOCK_WIDTH;
+			rect.y = position.y+i*BLOCK_HEIGHT; 		
 			SDL_RenderFillRect(renderer, &rect);
 		}
 	}
-	SDL_RenderPresent(renderer);
-	
+	//SDL_RenderPresent(renderer);
 	return;
 }
 
@@ -177,8 +176,9 @@ SDL_Rect move_tetromino(int dir, pos position)
 	tmp_rect.h = BLOCK_HEIGHT;
 	tmp_rect.x = position.x;
 	tmp_rect.y = position.y;
+	position.t_type = I_TETROMINO;
 
-	purge_tetromino(tmp_rect);
+	purge_tetromino(tmp_rect, position);
 	draw_tetromino(position.t_type, position.x, position.y);
 
 	return tmp_rect;
@@ -197,8 +197,6 @@ pos draw_tetromino(int tetromino, int posx, int posy)
 	/* Defines the width and height of the blockz */
 	recta.w = BLOCK_WIDTH;
 	recta.h = BLOCK_HEIGHT;
-	
-
 
 	switch (tetromino) {
 		case Z_TETROMINO :
@@ -286,11 +284,8 @@ int main()
 	}
 
 	create_win();
-	coord = draw_tetromino(rand() % 4, rand() % 320, 100);
+	coord = draw_tetromino(rand() % 4, rand() % 320, -96);
 	SDL_RenderPresent(renderer);
-
-	
-
 	while (1) {
 		while (SDL_PollEvent(&e)) {
 			if (e.type == SDL_QUIT) {
