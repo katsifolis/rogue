@@ -187,14 +187,6 @@ SDL_Rect move_tetromino(int dir, pos position)
 	position.t_type = I_TETROMINO;
 
 	purge_tetromino(tmp_rect, position);
-
-	/*
-	* 
-	*
-	*
-	*/
-	
-
 	draw_tetromino(position.t_type, position.x, position.y+32); 
 
 	return tmp_rect;
@@ -284,6 +276,7 @@ pos draw_tetromino(int tetromino, int posx, int posy)
 			
 			break;
 	}
+
 	return cur_pos;
 	
 }
@@ -323,6 +316,7 @@ int main()
 			if (e.key.keysym.sym == SDLK_d && e.type == SDL_KEYDOWN)
 			{
 				SDL_Delay(100);
+				quit  = 1;
 			//	move_tetromino(block, WEST, rand() % 4);
 			}
 			
@@ -334,20 +328,26 @@ int main()
 			coord.y = coord.y + increment;
 			SDL_RenderPresent(renderer);
 			SDL_Log("%d", coord.x);
-			int i, j;
+			int i = 0, j = 0;
 			for(i = 0; i < (WIN_HEIGHT / 32); i++)
 			{
 				for(j = 0; j < (WIN_WIDTH / 32); j++)
 				{
+					if((game_grid[WIN_HEIGHT / 32][j] == 1) && (i == 14)) 
+					{
+						coord.y = 10;
+						coord.x = 10;
+						coord.t_type = 0;
+						move_tetromino(-1, coord);
+					}
+
 					printf("%d ", game_grid[i][j]);
-					if(game_grid[WIN_HEIGHT / 32][j] == 1)
-						quit = 1;
 				}
 				printf("\n");
 			}
-			
+			SDL_Delay(300);
 		}
-		coord = draw_tetromino(rand() % 4, rand() % 320, -96);
 	}
+	
 	return 0;
 }
