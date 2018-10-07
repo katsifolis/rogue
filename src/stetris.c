@@ -19,8 +19,6 @@
 
 #define WIN_WIDTH 320
 #define WIN_HEIGHT 480
-#define GAME_WIDTH 320 /* Must be fixed according to BLOCK_WIDTH & HEIGHT */
-#define GAME_HEIGHT 320
 
 #define BACKGROUND_COLOR 0x000000
 #define BLOCK_COLOR 0xff0000
@@ -31,7 +29,7 @@
 #define EAST 3 
 
 #define T_TETROMINO 0
-#define CUBE_TETROMINO 1
+#define C_TETROMINO 1
 #define I_TETROMINO 2
 #define L_TETROMINO 3
 #define Z_TETROMINO 4
@@ -57,6 +55,8 @@ typedef struct _pos {
 	int t_type;
 } pos;
 
+char *tetromino[5] =
+{"t_tetromino", "c_tetromino", "i_tetromino", "l_tetromino", "z_tetromino"};
 
 int
 l_tetromino[4][3] = 
@@ -100,7 +100,7 @@ t_tetromino[4][3] =
 { 0, 0, 0 },
 { 1, 1, 1 },
 { 0, 1, 0 },
-{ 0, 1, 0 }
+{ 0, 0, 0 }
 };
 
 int
@@ -112,6 +112,8 @@ p_tetromino[4][3] =
 { 0, 1, 0 }
 };
 
+/* STAT */
+
 static int game_grid[WIN_HEIGHT / 32][WIN_WIDTH / 32]; 
 static SDL_Rect tmp_rect;
 static SDL_Rect game_area;
@@ -122,15 +124,21 @@ static SDL_Color block_color;
 static SDL_Texture *tex;
 static SDL_Rect _piece;
 static pos tmpos;
+static int line_count = 0;
 static int startx = 0;
 static int starty = 0;
 
+/* FUNC */
 
 pos draw_tetromino(int tetromino, int posx, int posy);
+void create_win();
+void purge_tetromino(int type, SDL_Rect rect, pos position);
+SDL_Rect move_tetromino(int dir, pos position);
 
 
 
-void create_win() {
+void create_win() 
+{
 	int i, j;
 	window = SDL_CreateWindow("STetris",
 			 SDL_WINDOWPOS_UNDEFINED,
@@ -163,16 +171,47 @@ void create_win() {
 	
 }
 
-void purge_tetromino(SDL_Rect rect, pos position)
+void purge_tetromino(int type, SDL_Rect rect, pos position)
 {
 	int i, j;
 	SDL_SetRenderDrawColor(renderer, SDL_BACKGROUND);
 	for (i = 0; i < 4; i++) {
 		for (j = 0; j < 3; j++) {
 			rect.x = position.x+j*BLOCK_WIDTH;
-			rect.y = position.y+i*BLOCK_HEIGHT; 		
-			SDL_RenderFillRect(renderer, &rect);
-			game_grid[rect.y / 32][rect.x / 32] = 0;
+			rect.y = position.y+i*BLOCK_HEIGHT - 32; 		
+			if (type == T_TETROMINO)
+			{
+				if (t_tetromino[i][j] == game_grid[rect.y / 32][rect.x / 32])
+				{	
+					SDL_RenderFillRect(renderer, &rect);
+					game_grid[rect.y / 32][rect.x / 32] = 0;
+				}
+			} else if (type == C_TETROMINO) {
+			
+				if (c_tetromino[i][j] == game_grid[rect.y / 32][rect.x / 32])
+				{
+					SDL_RenderFillRect(renderer, &rect);
+					game_grid[rect.y / 32][rect.x / 32] = 0;
+				}
+			} else if (type == I_TETROMINO) {
+				if (i_tetromino[i][j] == game_grid[rect.y / 32][rect.x / 32])
+				{
+					SDL_RenderFillRect(renderer, &rect);
+					game_grid[rect.y / 32][rect.x / 32] = 0;
+				}
+			} else if (type == L_TETROMINO) {
+				if (l_tetromino[i][j] == game_grid[rect.y / 32][rect.x / 32])
+				{
+					SDL_RenderFillRect(renderer, &rect);
+					game_grid[rect.y / 32][rect.x / 32] = 0;
+				}
+			} else if (type == Z_TETROMINO) {
+				if (z_tetromino[i][j] == game_grid[rect.y / 32][rect.x / 32])
+				{
+					SDL_RenderFillRect(renderer, &rect);
+					game_grid[rect.y / 32][rect.x / 32] = 0;
+				}
+			} 
 		}
 	}
 	return;
@@ -184,10 +223,10 @@ SDL_Rect move_tetromino(int dir, pos position)
 	tmp_rect.h = BLOCK_HEIGHT;
 	tmp_rect.x = position.x;
 	tmp_rect.y = position.y;
-	position.t_type = I_TETROMINO;
-
-	purge_tetromino(tmp_rect, position);
-	draw_tetromino(position.t_type, position.x, position.y+32); 
+//	position.t_type = Z_TETROMINO;
+	
+	purge_tetromino(position.t_type, tmp_rect, position);
+	draw_tetromino(position.t_type, position.x, position.y); 
 
 	return tmp_rect;
 
@@ -261,7 +300,7 @@ pos draw_tetromino(int tetromino, int posx, int posy)
 				}
 			}
 			break;
-		case CUBE_TETROMINO :
+		case C_TETROMINO :
 			SDL_SetRenderDrawColor(renderer, SDL_GREEN);
 			for (i = 0; i < 4; i++) {
 				for (j = 0; j < 3; j++) {
@@ -285,14 +324,15 @@ pos draw_tetromino(int tetromino, int posx, int posy)
 int main()
 {
 	pos coord;
-	coord.x = 11;
-	coord.y = 10;
-	coord.t_type = 0;
+	coord.x = 0;
+	coord.y = 0;
+	coord.t_type = I_TETROMINO;
 	srand(time(NULL));
 	SDL_Event e;
 	SDL_Rect block;
 	int quit = 0;
 	int increment = 32;
+	int line_count = 0;
 	
 	if(!SDL_Init(SDL_INIT_VIDEO))
 	{
@@ -313,39 +353,43 @@ int main()
 				SDL_Quit();
 				break;
 			}
-			if (e.key.keysym.sym == SDLK_d && e.type == SDL_KEYDOWN)
+			if (e.key.keysym.sym == SDLK_p && e.type == SDL_KEYDOWN)
 			{
 				SDL_Delay(100);
 				quit  = 1;
-			//	move_tetromino(block, WEST, rand() % 4);
 			}
-			
+			if (e.key.keysym.sym == SDLK_r && e.type == SDL_KEYDOWN)
+			{
+				SDL_Delay(100);
+				quit  = 0;
+			}
 		}
 		if(!quit)
 		{
-			SDL_Delay(300);
+			SDL_Delay(200);
 			move_tetromino(-1, coord);
 			coord.y = coord.y + increment;
 			SDL_RenderPresent(renderer);
 			SDL_Log("%d", coord.x);
-			int i = 0, j = 0;
-			for(i = 0; i < (WIN_HEIGHT / 32); i++)
+			int i = 0, j = 0, flag = 0;
+			for (i = 0; i < (WIN_HEIGHT / 32); i++)
 			{
-				for(j = 0; j < (WIN_WIDTH / 32); j++)
+				for (j = 0; j < (WIN_WIDTH / 32); j++)
 				{
-					if((game_grid[WIN_HEIGHT / 32][j] == 1) && (i == 14)) 
+					if (line_count == 11)
 					{
-						coord.y = 10;
-						coord.x = 10;
-						coord.t_type = 0;
-						move_tetromino(-1, coord);
+						coord.y = 0;
+						coord.x = coord.x + 32;
+						coord.t_type = I_TETROMINO;
+						line_count = -1;
 					}
-
 					printf("%d ", game_grid[i][j]);
 				}
 				printf("\n");
 			}
-			SDL_Delay(300);
+			line_count++;
+			printf("-- (%d) --\n", line_count);
+
 		}
 	}
 	
